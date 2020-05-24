@@ -1,4 +1,5 @@
 package socialdistancing;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -28,7 +29,7 @@ public class Frame extends JPanel implements ActionListener{
 	JFrame frame;
 	Control control; //
 	Timer timer; //Event control	
-	int time = 0; //Track time as the simulation runs
+	static int time = 0; //Track time as the simulation runs
 	
 	/* constructor will setup our main Graphic User Interface - a simple Frame! */
 	public Frame(Control ctl, String title) {

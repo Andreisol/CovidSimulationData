@@ -92,11 +92,12 @@ public class Person extends Resident {
 		if(state == virus.infected) {
 			//recoveryTime update
 			sickTime -= ctl.timerValue;
-			
+			infectedTime++;
 			//once the person has been given enough time, they will be considered recovered
 			if(sickTime<=0) {
 				if(Math.random() < toDie) {
 					state = virus.died;
+					deathTime = Frame.time;
 					if (ctl != null) ctl.numDied++;
 				} else {
 					state = virus.recovered;
@@ -129,7 +130,7 @@ public class Person extends Resident {
 		if (this.isInfected() && p2.isCandidate()) {
 			p2.setInfected();
 		}else if(this.isCandidate() && p2.isInfected()) {
-			infectedBy = p2.name;
+			infectedBy =p2.name;
 			this.setInfected();
 		}				
 	}
