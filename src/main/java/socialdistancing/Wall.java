@@ -14,6 +14,11 @@ public class Wall{
     protected boolean visible;
     protected Image image;
     protected boolean vertical;
+    
+    //Variables we need to keep track of
+    String buildingName, gridRegion;
+    String msOfLastUpdate, activeInfected, activeRoamers;
+    
 
     public Wall(int x, int y, String imageS, boolean vertical) {
 
