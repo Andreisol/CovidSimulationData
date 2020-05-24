@@ -12,7 +12,10 @@ public class addBuilding {
 	
 	public static void main(String[] args)
 	{
-		
+		addBuilding addBoy = new addBuilding();
+		addBoy.addBuild("STATS#b1", "Empire State", "[0,60,0,48]", 160, 1, 1);
+
+
 	}
 	
 	public void addBuild(String sortKey,String building, String gridRegion, int msOfLastUpdate, int activeInfected,int activeRoamers)

@@ -69,7 +69,7 @@ public class queryBuilding {
         
         
         valueMap.put(":id", 1);
-        valueMap.put(":Sts", "STATS#b0");
+        valueMap.put(":Sts", "STATS#b1");
   
 
         querySpec
