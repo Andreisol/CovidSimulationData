@@ -35,22 +35,27 @@ public class queryBuilding {
 
         DynamoDB dynamoDB = new DynamoDB(client);
 
-        Table table = dynamoDB.getTable("CovidSimData");
+        Table table = dynamoDB.getTable("CovidSimData"); //Change this table name to what ever table you make.
 
         HashMap<String, String> nameMap = new HashMap<String, String>();
         nameMap.put("#sID", "SimID");
+        
+        //nameMap.put("#stats", "Stats"); //Only need this line when querying off partition and sort key
 
         HashMap<String, Object> valueMap = new HashMap<String, Object>();
-        valueMap.put(":id", 1);
+        valueMap.put(":id", 2);
+        //valueMap.put(":Sts", "STATS#b3"); //Only need this line when querying off partition and sort key
 
         QuerySpec querySpec = new QuerySpec().withKeyConditionExpression("#sID = :id").withNameMap(nameMap)
-            .withValueMap(valueMap);
+            .withValueMap(valueMap); //Queries off of partition Key
 
         ItemCollection<QueryOutcome> items = null;
         Iterator<Item> iterator = null;
         Item item = null;
 
+        //This chunk of code will Query based off partition key
         
+        /*
         try {
             System.out.println("Stat name from Sim 1");
             items = table.query(querySpec);
@@ -66,31 +71,33 @@ public class queryBuilding {
             System.err.println("Unable to query simID from 1");
             System.err.println(e.getMessage());
         }
+        */
         
         
-        valueMap.put(":id", 1);
-        valueMap.put(":Sts", "STATS#b1");
-  
-
+        //This chunk of code will query based off partition key and sortKey
+        
+        /*
         querySpec
-            .withKeyConditionExpression("#sID = :id and Stats = :Sts").withNameMap(nameMap)
+            .withKeyConditionExpression("#sID = :id and #stats = :Sts").withNameMap(nameMap)
             .withValueMap(valueMap);
 
         try {
-            System.out.println("Simulation 1 for Stats#b0");
+            System.out.println("Simulation 1 for Stats#b1");
             items = table.query(querySpec);
 
             iterator = items.iterator();
             while (iterator.hasNext()) {
                 item = iterator.next();
-                System.out.println(item.getNumber("SimID") + ": " + item.getString("Stats") + " " + item.getNumber("activeInfected") + " "  + item.getNumber("activeRoamers"));
+                System.out.println(item.getNumber("SimID") + ": " + item.getString("Stats") + " " + item.getString("building") + " : Active infected: " + item.getNumber("activeInfected"));
             }
 
         }
         catch (Exception e) {
-            System.err.println("Unable to query Sim1 for Stats#b0");
+            System.err.println("Unable to query Sim1 for Stats#b1");
             System.err.println(e.getMessage());
         }
+        */
+        
         
     }
 

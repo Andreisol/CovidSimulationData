@@ -13,7 +13,7 @@ public class addBuilding {
 	public static void main(String[] args)
 	{
 		addBuilding addBoy = new addBuilding();
-		addBoy.addBuild("STATS#b1", "Empire State", "[0,60,0,48]", 160, 1, 1);
+		addBoy.addBuild("STATS#b3", "Bruv's", "[0,60,0,40]", 160, 8, 10);
 
 
 	}
@@ -40,7 +40,7 @@ public class addBuilding {
 
         Table table = dynamoDB.getTable("CovidSimData");
 
-	    Integer simId = 1;
+	    Integer simId = 2;
 	    String stats = sortKey;
 	    String build = building;
 	    String grid = gridRegion;
