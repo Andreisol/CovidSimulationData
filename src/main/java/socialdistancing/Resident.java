@@ -20,6 +20,7 @@ public abstract class Resident {
 	int vx, vy;
 	
 	protected boolean isRoaming = false;
+	boolean roams =  isRoaming;
 	double roamingPercent;
 	
 	/*
@@ -73,6 +74,7 @@ public abstract class Resident {
 			vx  = (int)(Math.random()*(10+1)+-5);	// velocity x
 			vy  = (int)(Math.random()*(10+1)+-5);	// velocity y
 			isRoaming = true;
+			roams = isRoaming;
 		}
 		
 	}

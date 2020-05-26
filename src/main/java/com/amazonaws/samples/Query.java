@@ -19,7 +19,9 @@ public class Query {
 	
 	public static void main(String[] args)
 	{
-		//Make calls n stuff here
+		Item itemboy = Query.getItem(2, "p27");
+		
+		System.out.println(itemboy.getInt("collisions"));
 	}
 	
 	public static Item getItem(int primaryKey,String sortKey)

@@ -28,7 +28,7 @@ public class Frame extends JPanel implements ActionListener{
 	//simulation control objects/values
 	JFrame frame;
 	Control control; //
-	Timer timer; //Event control	
+	static Timer timer; //Event control	
 	static int time = 0; //Track time as the simulation runs
 	
 	/* constructor will setup our main Graphic User Interface - a simple Frame! */

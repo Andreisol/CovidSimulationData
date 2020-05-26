@@ -8,17 +8,17 @@ import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.Table;
 
-public class addBuilding {
+public class addData {
 	
 	public static void main(String[] args)
 	{
-		addBuilding addBoy = new addBuilding();
-		addBoy.addBuild("STATS#b3", "Bruv's", "[0,60,0,40]", 160, 8, 10);
+		addData addBoy = new addData();
+		addBoy.addBuild("STATS#b1", "Empire State", "[0,60,0,48]", 160, 1, 1);
 
 
 	}
 	
-	public void addBuild(String sortKey,String building, String gridRegion, int msOfLastUpdate, int activeInfected,int activeRoamers)
+	public Table connect()
 	{
 		ProfileCredentialsProvider credentialsProvider = new ProfileCredentialsProvider();
         try {
@@ -39,6 +39,13 @@ public class addBuilding {
         DynamoDB dynamoDB = new DynamoDB(client);
 
         Table table = dynamoDB.getTable("CovidSimData");
+        
+        return table;
+	}
+	
+	public void addBuild(String sortKey,String building, String gridRegion, int msOfLastUpdate, int activeInfected,int activeRoamers)
+	{
+		Table table = connect();
 
 	    Integer simId = 2;
 	    String stats = sortKey;
@@ -57,6 +64,24 @@ public class addBuilding {
     		   .withInt("activeInfected", infected)
     		   .withInt("activeRoamers", roamers);
     		  
+       
+       table.putItem(load);
+	}
+	
+	public void addPers(String sortKey, String healthStatus, boolean isRoamer, int collisions, String infectedBy, int infectionLength, int deathTime)
+	{
+		Table table = connect();
+
+	    Integer simId = 2;
+	    
+       Item load = new Item()
+    		   .withPrimaryKey("SimID", simId, "Stats", sortKey)
+    		   .withString("healthStatus", healthStatus)
+    		   .withBoolean("isRoamer", isRoamer)
+    		   .withInt("collisions", collisions)
+    		   .withString("infectedBy", infectedBy)
+    		   .withInt("infecitonLength", infectionLength)
+    		   .withInt("deathTime", deathTime);
        
        table.putItem(load);
 	}

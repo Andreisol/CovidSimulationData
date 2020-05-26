@@ -6,10 +6,12 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import socialdistancing.Person.virus;
+
 public class Control {
 		String title = "Social Distance Simulation";
 		//Model and View
-		ArrayList<Person> model; //the community of Person objects	
+		static ArrayList<Person> model; //the community of Person objects	
 		Frame view; //JPanel graphics window
 		
 		// counters for "this" simulation instance
@@ -116,10 +118,13 @@ public class Control {
 		 */
 		public void paintPersons(Graphics g) 
 		{
-			
+
+			int numInfect = 0;
 			//find the Person in the Model!
 			int index = 0;
 			for(Person pDot1: model) {
+				if(pDot1.state == virus.infected)
+					numInfect++;
 				for(Person pDot2: model) {
 					//for each unique pair invoke the collision detection code
 					pDot1.collisionDetector(pDot2);
@@ -151,6 +156,12 @@ public class Control {
 				g.fillOval((frameX-(int)(frameX*.02)), (int)(frameY-((numPeople-index)*OvalH)/1.67), OvalW, OvalH);
 				index++;
 				
+			}
+			if(numInfect == 0)
+			{
+				Frame.timer.stop();
+				_Main stuff = new _Main();
+				stuff.pushData();
 			}
 		}
 		
@@ -214,11 +225,12 @@ public class Control {
 			
 		}
 		
-
+		static Wall[] walls;
+		
 		public void personToWallCollision(Person p) {
 			
 			
-			Wall[] walls = Frame.getWalls();
+			walls = Frame.getWalls();
 			
 			Rectangle[] r = {walls[0].getBounds(), walls[1].getBounds(), walls[2].getBounds(), walls[3].getBounds(),
 					walls[4].getBounds(), walls[5].getBounds(), walls[6].getBounds(), walls[7].getBounds()};
