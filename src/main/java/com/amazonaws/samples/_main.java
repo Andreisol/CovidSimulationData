@@ -8,11 +8,14 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.ResponseHeaderOverrides;
+import com.amazonaws.services.s3.model.S3Object;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-
-
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,22 +42,93 @@ import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.GetBucketLocationRequest;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
 
 public class _main {
-	public static void main(String args[])
+	public static void main(String args[]) throws IOException
 	{
 		_main AndreiGay = new _main();
 		//AndreiGay.CreateTable();
 		
 		//AndreiGay.TestS3();
-		AndreiGay.UploadS3Obj();
+		//AndreiGay.UploadS3Obj();
+		AndreiGay.DonwloadS3();
 	}
 
+	public void DonwloadS3() throws IOException
+	{
+		 Regions clientRegion = Regions.DEFAULT_REGION;
+	        String bucketName = "ytwff672f82f";
+	        String key = "Test";
+
+	        
+	        
+	        S3Object fullObject = null, objectPortion = null, headerOverrideObject = null;
+	        try {
+	            AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+	                    .withRegion(clientRegion)
+	                    .withCredentials(new ProfileCredentialsProvider("credentials.txt", "Ethan2"))
+	                    .build();
+
+	            // Get an object and print its contents.
+	            System.out.println("Downloading an object");
+	            fullObject = s3Client.getObject(new GetObjectRequest(bucketName, key));
+	            System.out.println("Content-Type: " + fullObject.getObjectMetadata().getContentType());
+	            System.out.println("Content: ");
+	            displayTextInputStream(fullObject.getObjectContent());
+
+	            // Get a range of bytes from an object and print the bytes.
+	           /* GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName, key)
+	                    .withRange(0, 9);
+	            objectPortion = s3Client.getObject(rangeObjectRequest);
+	            System.out.println("Printing bytes retrieved.");
+	            displayTextInputStream(objectPortion.getObjectContent());
+
+	            // Get an entire object, overriding the specified response headers, and print the object's content.
+	            ResponseHeaderOverrides headerOverrides = new ResponseHeaderOverrides()
+	                    .withCacheControl("No-cache")
+	                    .withContentDisposition("attachment; filename=example.txt");
+	            GetObjectRequest getObjectRequestHeaderOverride = new GetObjectRequest(bucketName, key)
+	                    .withResponseHeaders(headerOverrides);
+	            headerOverrideObject = s3Client.getObject(getObjectRequestHeaderOverride);
+	            displayTextInputStream(headerOverrideObject.getObjectContent());*/
+	        } catch (AmazonServiceException e) {
+	            // The call was transmitted successfully, but Amazon S3 couldn't process 
+	            // it, so it returned an error response.
+	            e.printStackTrace();
+	        } catch (SdkClientException e) {
+	            // Amazon S3 couldn't be contacted for a response, or the client
+	            // couldn't parse the response from Amazon S3.
+	            e.printStackTrace();
+	        } finally {
+	            // To ensure that the network connection doesn't remain open, close any open input streams.
+	            if (fullObject != null) {
+	                fullObject.close();
+	            }
+	            if (objectPortion != null) {
+	                objectPortion.close();
+	            }
+	            if (headerOverrideObject != null) {
+	                headerOverrideObject.close();
+	            }
+	        }
+	}
+	public void displayTextInputStream(InputStream input) throws IOException {
+        // Read the text input stream one line at a time and display each line.
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+        }
+        System.out.println();
+    }
+	
 	public void TestS3()
 	{
 		Regions clientRegion = Regions.US_WEST_2;
@@ -86,8 +160,57 @@ public class _main {
         }
     }
 	
+	public void ListS3()
+	{
+		Regions clientRegion = Regions.US_WEST_2;
+		AmazonS3 s3 = AmazonS3ClientBuilder.standard()
+                .withRegion(clientRegion)
+                .build();
+		
+		List<Bucket> buckets = s3.listBuckets();
+		for(Bucket b: buckets)
+		{
+			System.out.println(b.getName());
+		}
+	}
+	
 	public void UploadS3Obj()
 	{
+		
+		 Regions clientRegion = Regions.DEFAULT_REGION;
+	        String bucketName = "";
+	        String stringObjKeyName = "*** String object key name ***";
+	        String fileObjKeyName = "*** File object key name ***";
+	        String fileName = "/Users/courtneydavies/Desktop/ShrekS3Test.jpg";
+
+	        try {
+	            //This code expects that you have AWS credentials set up per:
+	            // https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html
+	            AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+	                    .withRegion(clientRegion)
+	                    .build();
+
+	            // Upload a text string as a new object.
+	            s3Client.putObject(bucketName, stringObjKeyName, "Uploaded String Object");
+
+	            // Upload a file as a new object with ContentType and title specified.
+	            PutObjectRequest request = new PutObjectRequest(bucketName, fileObjKeyName, new File(fileName));
+	            ObjectMetadata metadata = new ObjectMetadata();
+	            metadata.setContentType("plain/text");
+	            metadata.addUserMetadata("title", "someTitle");
+	            request.setMetadata(metadata);
+	            s3Client.putObject(request);
+	        } catch (AmazonServiceException e) {
+	            // The call was transmitted successfully, but Amazon S3 couldn't process 
+	            // it, so it returned an error response.
+	            e.printStackTrace();
+	        } catch (SdkClientException e) {
+	            // Amazon S3 couldn't be contacted for a response, or the client
+	            // couldn't parse the response from Amazon S3.
+	            e.printStackTrace();
+	        }
+		
+		/*
 		try {
             //This code expects that you have AWS credentials set up per:
             // https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html
@@ -100,7 +223,7 @@ public class _main {
             //s3Client.putObject("ytwff672f82f", "Test", "Uploaded String Object");
 
             // Upload a file as a new object with ContentType and title specified.
-            PutObjectRequest request = new PutObjectRequest("ytwff672f82f", "TestImage", new File("/Users/SMDiMac/Desktop/S3TestShrek.png"));
+            PutObjectRequest request = new PutObjectRequest("ytwff672f82f", "TestImage", new File("/Users/courtneydavies/Desktop/ShrekS3Test.jpg"));
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType("image");
             metadata.addUserMetadata("title", "someTitle");
@@ -114,7 +237,7 @@ public class _main {
             // Amazon S3 couldn't be contacted for a response, or the client
             // couldn't parse the response from Amazon S3.
             e.printStackTrace();
-        }
+        }*/
 	}
 	
 	public void CreateTable()
